@@ -21,7 +21,6 @@
 
 // Library Imports
 #include <string.h>
-#include <wolfssl.h>
 
 // Cryptography Imports
 #include "wolfssl/wolfcrypt/settings.h"
