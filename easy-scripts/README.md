@@ -1,4 +1,4 @@
-These shell scripts will enable running of the tiva board and docker build without needing to copy and paste a bunch of codes!
+These shell scripts will allow running of the tiva board and docker build without needing to copy and paste a bunch of codes!
 
 docker-build+launch(ARM or x86).sh 
 - This script helps run docker without typing all these commands
