@@ -4,6 +4,7 @@
 .vscode/
 *.swp
 cscope*
+lib/wolfssl
 
 ## C
 
