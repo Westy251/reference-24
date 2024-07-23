@@ -8,5 +8,3 @@ These shell scripts will allow running of the tiva board and docker build withou
 tiva-easyrun.sh
 - This script helps run the design challenge program
 - Make sure to place tiva-easyrun.sh into your design challenge folder (example, inside directory ./reference-24)
-
-autogdb.sh
