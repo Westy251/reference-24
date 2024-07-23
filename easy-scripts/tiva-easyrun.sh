@@ -35,5 +35,3 @@ python fw_update.py --firmware ./firmware_protected.bin
 echo "Now to the car serial..."
 
 car-serial
-
-cd easy-scripts
