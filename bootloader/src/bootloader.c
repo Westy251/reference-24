@@ -17,6 +17,11 @@
 // Application Imports
 #include "driverlib/gpio.h"
 #include "uart/uart.h"
+#include "../keys.h" // !! ACCESS TO KEY
+
+// Library Imports
+#include <string.h>
+#include <wolfssl.h>
 
 // Cryptography Imports
 #include "wolfssl/wolfcrypt/settings.h"
@@ -28,10 +33,16 @@
 void load_firmware(void);
 void boot_firmware(void);
 void uart_write_hex_bytes(uint8_t, uint8_t *, uint32_t);
+// Brugh Forward Declarations
+int uart_read_bytes(int bytes, uint8_t* dest);
+int frame_decrypt(uint8_t *arr, int expected_type);
 
 // Firmware Constants
 #define METADATA_BASE 0xFC00 // base address of version and firmware size in Flash
 #define FW_BASE 0x10000      // base address of firmware in Flash
+// Brugh Firmware Constants
+#define FW_VERSION_ADDRESS (uint16_t *)METADATA_BASE;
+#define FW_SIZE_ADDRESS (uint16_t *)(METADATA_BASE + 2);
 
 // FLASH Constants
 #define FLASH_PAGESIZE 1024
@@ -42,14 +53,18 @@ void uart_write_hex_bytes(uint8_t, uint8_t *, uint32_t);
 #define ERROR ((unsigned char)0x01)
 #define UPDATE ((unsigned char)'U')
 #define BOOT ((unsigned char)'B')
+// Brugh Protocol Constants
+#define END ((unsigned char)0x02)
+#define TYPE ((unsigned char)0x04)
 
 // Device metadata
-uint16_t * fw_version_address = (uint16_t *)METADATA_BASE;
-uint16_t * fw_size_address = (uint16_t *)(METADATA_BASE + 2);
+//version and size address defined in "Brugh Firmware Constants"
+//uint16_t * fw_version_address = (uint16_t *)METADATA_BASE;
+//uint16_t * fw_size_address = (uint16_t *)(METADATA_BASE + 2);
 uint8_t * fw_release_message_address;
 
 // Firmware Buffer
-unsigned char data[FLASH_PAGESIZE];
+unsigned char data[FLASH_PAGESIZE]; // !! move to load initial firmware
 
 // Delay to allow time to connect GDB
 // green LED as visual indicator of when this function is running
@@ -114,7 +129,118 @@ int main(void) {
     }
 }
 
+/*
+ * ****************************************************************
+ * Reads a given number of bytes from UART1
+ * 
+ * \param bytes is the number of bytes to be read
+ * \param dest is where to write them
+ *
+ * \return Returns 0 if reading successful, 1 if not
+ * ****************************************************************
+ */
+// !! EDIT ME
+int uart_read_bytes(int bytes, uint8_t* dest){
+    int rcv = 0;//Received data
+    int read = 0; //Flag that reports on success of read operation
+    int result = 0;//Stores operation status
+    for (int i = 0; i < bytes; i += 1) {
+        rcv = uart_read(UART1, BLOCKING, &read);
+        dest[i] = rcv;
+        if (read != 0){
+            result = 1;
+        }
+    }
+    return result;
+}
 
+/* ****************************************************************
+ *
+ * Reads and decrypts a packet as well as checking its HASH.
+ *
+ * \param arr is the array that unencrypted data will be written to.
+ * 
+ * \return Returns a 0 on success, or a 1 if the GHASH was invalid.
+ * 
+ * ****************************************************************
+ */
+// !! EDIT ME
+int frame_decrypt(uint8_t *arr, int expected_type){
+    // Misc vars for reading
+    int read = 0;
+    uint32_t rcv = 0;
+    int error = 0;
+
+    uint8_t encrypted[1056];
+    uint8_t iv[16];
+
+    unsigned char gen_hash[32];
+
+    // Zero out the generated hash array
+    for (int c = 0; c < 32; c++){
+        gen_hash[c] = 0;
+    }
+
+    // Read and check TYPE
+    if (uart_read(UART1, BLOCKING, &read) != (int) expected_type){
+        error = 1;
+        return error;
+    }
+
+    // Reads DATA and HASH
+    for (int i = 0; i < 1056; i += 1) {
+        rcv = uart_read(UART1, BLOCKING, &read);
+        encrypted[i] = rcv;
+    }
+    // Reads IV
+    for (int i = 0; i < 16; i += 1) {
+        rcv = uart_read(UART1, BLOCKING, &read);
+        iv[i] = rcv;
+    }
+
+    // Unencrypt w/ CBC
+    const br_block_cbcdec_class* vd = &br_aes_big_cbcdec_vtable;
+    br_aes_gen_cbcdec_keys v_dc;
+    const br_block_cbcdec_class **dc;
+    dc = &v_dc.vtable;
+    vd->init(dc, KEY, 16);
+    vd->run(dc, iv, encrypted, 1056);
+
+    // Put unencrypted firmware into output array
+    for (int i = 0; i < 1024; i += 1) {
+        arr[i] = encrypted[i];
+    }
+
+    // Init hash variables
+    br_sha256_context ctx;
+    int owo = sizeof(br_sha256_context);
+    for (int uwu = 0; uwu < owo; uwu++){
+        ((uint8_t *)&ctx)[uwu] = 0;
+    }
+    // Generate HASH
+    br_sha256_init(&ctx); // Initialize SHA256 context
+    br_sha256_update(&ctx, arr, 1024); // Update context with data
+    br_sha256_out(&ctx, gen_hash);
+
+    // Compare new HASH to old HASH
+    for (int i = 0; i < 32; i += 1) {
+        if (gen_hash[i] != encrypted[1024 + i]){
+            error = 1;
+        }
+    }
+
+    return error;
+}
+
+/* ****************************************************************
+ *
+ * Recieves and decrypts all frames using frame_decrypt()
+ * 
+ * Writes start firmware metadata, firmware data, and release message
+ * to flash
+ * 
+ * ****************************************************************
+ */
  /*
  * Load the firmware into flash.
  */
