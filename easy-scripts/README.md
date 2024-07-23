@@ -8,3 +8,5 @@ docker-build+launch(ARM or x86).sh
 tiva-easyrun.sh
 - This script helps run the design challenge program
 - Make sure to place tiva-easyrun.sh into your design challenge folder (example, inside directory ./reference-24)
+
+gdbrun.sh
