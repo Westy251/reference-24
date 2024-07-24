@@ -77,21 +77,30 @@ void debug_delay_led() {
 }
 
 int main(){
-    initialize_uarts(UART0);
+    Aes dec; // Decrypt of Aes *aes
+    Aes enc; // Encrypt of Aes *aes
 
-    uart_write_str(UART0, "Hello World");
-    const char* str = "This is a secret"; // Make a string
-    uint8_t size = strlen(str); // Get the size
-        
-    byte data[size]; // Put the string into byte
-    memcpy(data, str, size); // Copy it   
-    byte myHash[32];
-    wc_Sha256Hash(data, size, myHash); // Hash it
-        
-    for(int i = 0; i < 32; i++){uart_write_hex(UART0, myHash[i]);} // Write it
+    //#include “../key_is_here.h” // The KEY is defined in there
 
-    uint8_t writtenHash[size];
-    uart_read(UART0, writtenHash, size);
+    #define KEY "keykeykeykeykey"
+
+    uint8_t iv[16]; // Define IV
+    uart_read(UART0, iv, 16); // Read IV
+        
+    uint16_t size; // Define size
+    uart_read(UART0, &size, 2); // Read size
+        
+    uint8_t ciphertext[size]; // Define ciphertext
+    memset(ciphertext, 0, size); // Initialize block size
+    uart_read(UART0, ciphertext, size); // read ciphertext
+        
+    wc_AesSetIV(&dec, iv); // Set IV
+    wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
+        
+    uint8_t plaintext[size]; // Define plaintext
+    wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
+    uart_write_hex(UART0, plaintext); // Write plaintext
+
 }
 
 /*hi*/
