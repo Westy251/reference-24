@@ -77,6 +77,9 @@ void debug_delay_led() {
 }
 
 int main(){
+
+    initialize_uarts(UART0);
+    
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
 
