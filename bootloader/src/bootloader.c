@@ -202,6 +202,9 @@ int frame_decrypt(uint8_t *arr, int expected_type){
     }
 
     // Unencrypt w/ CBC
+    /* 
+    REFERENCE FROM OLD CODE DO NOT DELETE
+
     const br_block_cbcdec_class* vd = &br_aes_big_cbcdec_vtable;
     br_aes_gen_cbcdec_keys v_dc;
     const br_block_cbcdec_class **dc;
@@ -226,6 +229,9 @@ int frame_decrypt(uint8_t *arr, int expected_type){
         ((uint8_t *)&ctx)[uwu] = 0;
     }
     // Generate HASH
+    /*
+    REFERENCE OLD CODE DO NOT DELETE:
+
     br_sha256_init(&ctx); // Initialize SHA256 context
     br_sha256_update(&ctx, arr, 1024); // Update context with data
     br_sha256_out(&ctx, gen_hash);
@@ -235,9 +241,11 @@ int frame_decrypt(uint8_t *arr, int expected_type){
         if (gen_hash[i] != encrypted[1024 + i]){
             error = 1;
         }
-    }*/
+    }
+    */
 
-   wc_AesGcmDecrypt(Aes * aes, byte * out, const byte * in, word32 sz, const byte * iv, word32 ivSz, const byte * authTag, word32 authTagSz, const byte * authIn, word32 authInSz)
+   
+
 
     return error;
 }
