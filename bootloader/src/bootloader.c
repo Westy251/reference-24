@@ -82,6 +82,8 @@ int main(){
 
     //debug code
 
+    uart_write_str(UART0, "Fortnite Farts");
+
     uint8_t test_iv[16] = "arthurrobinsoniv";
     uint8_t test_size[2] = 16;
     uint8_t test_ciphertext[size] = "arthurrobinsoniv";
