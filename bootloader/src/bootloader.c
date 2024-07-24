@@ -94,11 +94,6 @@ int main(){
     uint8_t writtenHash[size];
     uart_read(UART0, writtenHash, size);
 }
-
-/*hi*/
-/*hi*/
-
-/*
 int main(void) {
 
     // Enable the GPIO port that is used for the on-board LED.
@@ -135,8 +130,6 @@ int main(void) {
         }
     }
 }
-*/
-
  /*
  * Load the firmware into flash.
  */
