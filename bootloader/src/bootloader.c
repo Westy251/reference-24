@@ -88,8 +88,10 @@ int main(){
     uart_write_str(UART0, "Fortnite Farts");
 
     uint8_t test_iv[16] = "arthurrobinsoniv";
-    uint8_t test_size[2] = 16;
-    uint8_t test_ciphertext[test_size] = "arthurrobinsoniv";
+    uint8_t test_ciphertext[16] = "arthurrobinsoniv";
+    uint8_t test_size = strlen("arthurrobinsoniv");
+
+    //
 
     uart_write_hex(UART0, test_iv);
     uart_write_hex(UART0, test_size);
