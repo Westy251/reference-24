@@ -76,7 +76,26 @@ void debug_delay_led() {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0x0);
 }
 
+int main(){
+    initialize_uarts(UART0);
 
+    uart_write_str(UART0, "Hello World");
+    const char* str = "This is a secret"; // Make a string
+    uint8_t size = strlen(str); // Get the size
+        
+    byte data[size]; // Put the string into byte
+    memcpy(data, str, size); // Copy it
+        
+    byte myHash[32];
+    wc_Sha256Hash(data, size, myHash); // Hash it
+        
+    for(int i = 0; i < 32; i++){uart_write_hex(UART0, myHash[i]);} // Write it
+
+    uint8_t writtenHash[size];
+    uart_read(UART0, writtenHash, size);
+}
+
+/*
 int main(void) {
 
     // Enable the GPIO port that is used for the on-board LED.
@@ -113,7 +132,7 @@ int main(void) {
         }
     }
 }
-
+*/
 
  /*
  * Load the firmware into flash.
