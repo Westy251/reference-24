@@ -103,20 +103,30 @@ int main(){
 
     uint8_t iv[16]; // Define IV
     uart_read(UART0, iv, 16); // Read IV
+
+    uart_write_str(UART0, "\n one:");
         
     uint16_t size; // Define size
     uart_read(UART0, &size, 2); // Read size
+
+    uart_write_str(UART0, "\n two:");
         
     uint8_t ciphertext[size]; // Define ciphertext
     memset(ciphertext, 0, size); // Initialize block size
     uart_read(UART0, ciphertext, size); // read ciphertext
-        
+    
+    uart_write_str(UART0, "\n three:");
+
     wc_AesSetIV(&dec, iv); // Set IV
     wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
         
+    uart_write_str(UART0, "\n four:");
+
     uint8_t plaintext[size]; // Define plaintext
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
     uart_write_hex(UART0, plaintext); // Write plaintext
+
+    uart_write_str(UART0, "\n five:");
 
     uart_write_str(UART0, "\nDecrypted:");
     uart_write_hex(UART0, plaintext);
