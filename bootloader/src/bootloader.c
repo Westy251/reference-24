@@ -85,7 +85,7 @@ int main(){
         
     byte data[size]; // Put the string into byte
     memcpy(data, str, size); // Copy it
-        
+    //test    
     byte myHash[32];
     wc_Sha256Hash(data, size, myHash); // Hash it
         
