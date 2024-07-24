@@ -95,6 +95,8 @@ int main(){
     uart_read(UART0, writtenHash, size);
 }
 
+/*hi*/
+
 /*
 int main(void) {
 
