@@ -27,7 +27,7 @@ def randPad(data, size):
 
     return data + randData
 
-# Encrypts the input data using CBC
+# Encrypts the input data using GCM
 # Takes the data to be encrypted, the key,
 # and additional authenticated data
 # Returns the encypted data
@@ -39,9 +39,9 @@ def encrypt(data, key, header):
 
     # Returns encrypted data, tag and IV
     plaintext = data + h.digest()
-    cipher = AES.new(key, AES.MODE_CBC)
+    cipher = AES.new(key, AES.MODE_GCM)
     
-    iv = cipher.iv
+    iv = cipher.nonce
     ct_bytes = cipher.encrypt(plaintext)
     
     return(ct_bytes + iv)
