@@ -29,6 +29,8 @@
 #include "wolfssl/wolfcrypt/aes.h"
 #include "wolfssl/wolfcrypt/sha.h"
 #include "wolfssl/wolfcrypt/rsa.h"
+Aes dec;
+Aes enc;
 
 // Forward Declarations
 void load_firmware(void);
@@ -199,14 +201,18 @@ int frame_decrypt(uint8_t *arr, int expected_type){
         iv[i] = rcv;
     }
 
-    //Charlie's lovely little project
     // Unencrypt w/ CBC
-    /*const br_block_cbcdec_class* vd = &br_aes_big_cbcdec_vtable;
+    const br_block_cbcdec_class* vd = &br_aes_big_cbcdec_vtable;
     br_aes_gen_cbcdec_keys v_dc;
     const br_block_cbcdec_class **dc;
     dc = &v_dc.vtable;
     vd->init(dc, KEY, 16);
     vd->run(dc, iv, encrypted, 1056);
+    */
+
+    wc_AesGCMSetKey(&dec, KEY, 2 /*idk if this is key size*/, /*where is devId*/);
+    wc_AesSetIV(&dec, iv);
+    wc_AesGcmDecrypt(&dec, encrypted, 1056, iv, /*authtag and its sizes missing*/);
 
     // Put unencrypted firmware into output array
     for (int i = 0; i < 1024; i += 1) {
