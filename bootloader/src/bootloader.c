@@ -118,6 +118,8 @@ int main(){
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
     uart_write_hex(UART0, plaintext); // Write plaintext
 
+    uart_write_str(UART0, "\nDecrypted:");
+    uart_write_hex(UART0, plaintext);
 }
 
 /*hi*/
