@@ -84,8 +84,7 @@ int main(){
     uint8_t size = strlen(str); // Get the size
         
     byte data[size]; // Put the string into byte
-    memcpy(data, str, size); // Copy it
-    //test    
+    memcpy(data, str, size); // Copy it   
     byte myHash[32];
     wc_Sha256Hash(data, size, myHash); // Hash it
         
