@@ -102,7 +102,7 @@ int main(){
     #define KEY "keykeykeykeykey"
 
     uint8_t iv[16]; // Define IV
-    uart_read(UART0, iv, 16); // Read IV
+    for (int i = 0; i < 16; i++){uart_read(UART0, &iv[i], 1);} // Read IV
 
     uart_write_str(UART0, "\n one:");
         
