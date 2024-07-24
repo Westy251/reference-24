@@ -198,8 +198,9 @@ int frame_decrypt(uint8_t *arr, int expected_type){
         iv[i] = rcv;
     }
 
+    //Charlie's lovely little project
     // Unencrypt w/ CBC
-    const br_block_cbcdec_class* vd = &br_aes_big_cbcdec_vtable;
+    /*const br_block_cbcdec_class* vd = &br_aes_big_cbcdec_vtable;
     br_aes_gen_cbcdec_keys v_dc;
     const br_block_cbcdec_class **dc;
     dc = &v_dc.vtable;
@@ -227,7 +228,9 @@ int frame_decrypt(uint8_t *arr, int expected_type){
         if (gen_hash[i] != encrypted[1024 + i]){
             error = 1;
         }
-    }
+    }*/
+
+   wc_AesGcmDecrypt(Aes * aes, byte * out, const byte * in, word32 sz, const byte * iv, word32 ivSz, const byte * authTag, word32 authTagSz, const byte * authIn, word32 authInSz)
 
     return error;
 }
