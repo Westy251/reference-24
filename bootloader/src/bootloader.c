@@ -79,7 +79,7 @@ void debug_delay_led() {
 int main(){
 
     initialize_uarts(UART0);
-    
+
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
 
@@ -89,7 +89,7 @@ int main(){
 
     uint8_t test_iv[16] = "arthurrobinsoniv";
     uint8_t test_size[2] = 16;
-    uint8_t test_ciphertext[size] = "arthurrobinsoniv";
+    uint8_t test_ciphertext[test_size] = "arthurrobinsoniv";
 
     uart_write_hex(UART0, test_iv);
     uart_write_hex(UART0, test_size);
