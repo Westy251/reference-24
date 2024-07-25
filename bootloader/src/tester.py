@@ -18,3 +18,12 @@ iv = cipher.iv
 
 print(ct_bytes)
 
+print(ser.readline())
+ser.write(iv)
+print(ser.readline())
+ser.write(p16(len(ct_bytes)))
+print(ser.readline())
+ser.write(ct_bytes)
+print(ser.readline())
+print(ser.readline())
+

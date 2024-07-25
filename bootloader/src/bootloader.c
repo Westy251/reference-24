@@ -82,37 +82,53 @@ int main(){
 
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
-    
+
+    //debug code
+
+    uart_write_str(UART0, "Fortnite \n");
+
+    uint8_t test_iv[16] = "arthurrobinsoniv";
+    uint8_t test_ciphertext[16] = "arthurrobinsoniv";
+    uint8_t test_size = strlen("arthurrobinsoniv");
+
+    //
+
+    //uart_write_hex(UART0, test_iv);
+    //uart_write_hex(UART0, test_size);
+    //uart_write_hex(UART0, test_ciphertext);
+
+    //#include “../key_is_here.h” // The KEY is defined in there
+
     #define KEY "keykeykeykeykey"
 
     uint8_t iv[16]; // Define IV
     for (int i = 0; i < 16; i++){uart_read(UART0, &iv[i], 1);} // Read IV
 
-    uart_write_str(UART0, "\n IV Read in successfully:");
+    uart_write_str(UART0, "\n IV Read in successfully:\n");
         
     uint16_t size; // Define size
     uart_read(UART0, &size, 2); // Read size
 
-    uart_write_str(UART0, "\n Size read in successfully:");
+    uart_write_str(UART0, "\n Size read in successfully:\n");
         
-    uint8_t ciphertext[size]; // Define ciphertext
+    uint8_t ciphertext[8192]; // Define ciphertext
     memset(ciphertext, 0, size); // Initialize block size
-    uart_read(UART0, ciphertext, size); // read ciphertext
+    for (int i = 0; i < size; i++){uart_read(UART0, &ciphertext[i], 1);} // Read IV
     
-    uart_write_str(UART0, "\n Data read successfully:");
+    uart_write_str(UART0, "\n Data read successfully:\n");
 
     wc_AesSetIV(&dec, iv); // Set IV
     wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
         
-    uart_write_str(UART0, "\n Key set:");
+    uart_write_str(UART0, "\n Key set:\n");
 
-    uint8_t plaintext[size]; // Define plaintext
+    uint8_t plaintext[8192]; // Define plaintext
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
     uart_write_hex(UART0, plaintext); // Write plaintext
 
-    uart_write_str(UART0, "\n Plaintext written:");
+    uart_write_str(UART0, "\n Plaintext written:\n");
 
-    uart_write_str(UART0, "\nDecrypted:");
+    uart_write_str(UART0, "\nDecrypted:\n");
     uart_write_hex(UART0, plaintext);
 }
 
