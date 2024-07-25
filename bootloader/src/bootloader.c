@@ -78,74 +78,24 @@ void debug_delay_led() {
 
 int main(){
 
-    initialize_uarts(UART0);
-
-    char data[] = "\x00\x00\x00\x00\x00";
-
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
 
-    //debug code
+    #define KEY "arthurrobinsoniv"
 
-    uart_write_str(UART0, "Fortnite \n");
-
-    uint8_t test_iv[16] = "arthurrobinsoniv";
-    uint8_t test_ciphertext[16] = "arthurrobinsoniv";
-    uint8_t test_size = strlen("arthurrobinsoniv");
-
-    //
-
-    //uart_write_hex(UART0, test_iv);
-    //uart_write_hex(UART0, test_size);
-    //uart_write_hex(UART0, test_ciphertext);
-
-    //#include “../key_is_here.h” // The KEY is defined in there
-
-    #define KEY "keykeykeykeykey"
-
-    uint8_t iv[16]; // Define IV
-    for (int i = 0; i < 16; i++){uart_read(UART0, &iv[i], 1);} // Read IV
-
-    uart_write_str(UART0, "IV Read in successfully:\n");
-        
-    uint16_t size; // Define size
-    uart_read(UART0, &size, 2); // Read size
-
-    uart_write_str(UART0, "Size read in successfully:\n");
-    uart_write_hex(UART0, size);
-        
-    uint8_t ciphertext[8192]; // Define ciphertext
+    uint8_t iv[16] = "arthurrobinsoniv";
+    uint8_t ciphertext[16] = "K1mXU4LM4wrIOlIa7/YGGuVCebmB7Z7awvsLJkkI2c0=";
+    uint8_t size = strlen("K1mXU4LM4wrIOlIa7/YGGuVCebmB7Z7awvsLJkkI2c0=");
+   
     memset(ciphertext, 0, size); // Initialize block size
-    for (int i = 0; i < size; i++){uart_read(UART0, &ciphertext[i], 1);} // Read IV
-    
-    uart_write_str(UART0, "Data read successfully:\n");
-
     wc_AesSetIV(&dec, iv); // Set IV
     wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
-        
-    uart_write_str(UART0, "Key set: ");
 
-    
-
-    uint8_t plaintext[8192]; // Define plaintext
+    uint8_t plaintext[size]; // Define plaintext
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
-
-    uart_write_hex(UART0, plaintext);
-
-    
-    if(plaintext == data){
-        uart_write_str(UART0, "\nData decrypted:\n");
-    }
-    else{
-        uart_write_str(UART0, "\nError!");
-    }
     
     for (int i = 0; i < size; i++){uart_write(UART0, plaintext[i]);} // Print plaintext
 
-   // uart_write_str(UART0, "Plaintext written:\n");
-
-    //uart_write_str(UART0, "Decrypted:\n");
-    //uart_write_hex(UART0, plaintext);
 }
 
 /*hi*/
