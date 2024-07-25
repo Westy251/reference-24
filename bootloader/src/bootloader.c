@@ -104,29 +104,29 @@ int main(){
     uint8_t iv[16]; // Define IV
     for (int i = 0; i < 16; i++){uart_read(UART0, &iv[i], 1);} // Read IV
 
-    uart_write_str(UART0, "\n one:");
+    uart_write_str(UART0, "\n IV Read in successfully:");
         
     uint16_t size; // Define size
     uart_read(UART0, &size, 2); // Read size
 
-    uart_write_str(UART0, "\n two:");
+    uart_write_str(UART0, "\n Size read in successfully:");
         
     uint8_t ciphertext[size]; // Define ciphertext
     memset(ciphertext, 0, size); // Initialize block size
     uart_read(UART0, ciphertext, size); // read ciphertext
     
-    uart_write_str(UART0, "\n three:");
+    uart_write_str(UART0, "\n Data read successfully:");
 
     wc_AesSetIV(&dec, iv); // Set IV
     wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
         
-    uart_write_str(UART0, "\n four:");
+    uart_write_str(UART0, "\n Key set:");
 
     uint8_t plaintext[size]; // Define plaintext
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
     uart_write_hex(UART0, plaintext); // Write plaintext
 
-    uart_write_str(UART0, "\n five:");
+    uart_write_str(UART0, "\n Plaintext written:");
 
     uart_write_str(UART0, "\nDecrypted:");
     uart_write_hex(UART0, plaintext);
