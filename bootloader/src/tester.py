@@ -10,7 +10,7 @@ ser = serial.Serial("/dev/ttyACM0", 115200)
 RESP_OK = b"\x00"
 FRAME_SIZE = 256
 
-data = b"thisisatestinpu"
+data = b"\0x00\0x00\0x00\0x00\0x00"
 key = randbytes(16)
 cipher = AES.new(key, AES.MODE_CBC)
 ct_bytes = cipher.encrypt(pad(data, AES.block_size))
@@ -25,5 +25,8 @@ ser.write(p16(len(ct_bytes)))
 print(ser.readline())
 ser.write(ct_bytes)
 print(ser.readline())
+print(ser.readline())
+print(ser.readline())
+print(ser.read(len(ct_bytes)))
 print(ser.readline())
 
