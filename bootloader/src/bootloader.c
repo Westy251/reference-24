@@ -148,7 +148,7 @@ int uart_read_bytes(int bytes, uint8_t *dest){
 */
 int frame_decrypt(uint8_t *arr, int expected_type){
 
-    int read = 0;
+    int read = 0; //mroe
     uint32_t rcv = 0;
     int error = 0;
 
