@@ -18,15 +18,16 @@ iv = cipher.iv
 
 print(ct_bytes)
 
-print(ser.readline())
-ser.write(iv)
-print(ser.readline())
-ser.write(p16(len(ct_bytes)))
-print(ser.readline())
+print(ser.readline())#Reads greeting
+ser.write(iv)#Writes IV
+print(ser.readline())#Reads greeting
+ser.write(p16(len(ct_bytes)))#Writes length
+print(u16(ser.read(2)))
+print(ser.readline())#Reads ret
 ser.write(ct_bytes)
-print(ser.readline())
-print(ser.readline())
-print(ser.readline())
-print(ser.read(len(ct_bytes)))
-print(ser.readline())
+print(ser.readline())#Reads ret
+print(ser.readline())#Reads ret
+print(ser.readline())#Reads ret
+print(ser.read(len(ct_bytes)))#Reads plaintext
+print(ser.readline())#Reads ret
 

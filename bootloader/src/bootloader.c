@@ -80,6 +80,8 @@ int main(){
 
     initialize_uarts(UART0);
 
+    char data[] = "\x00\x00\x00\x00\x00";
+
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
 
@@ -110,6 +112,7 @@ int main(){
     uart_read(UART0, &size, 2); // Read size
 
     uart_write_str(UART0, "Size read in successfully:\n");
+    uart_write_hex(UART0, size);
         
     uint8_t ciphertext[8192]; // Define ciphertext
     memset(ciphertext, 0, size); // Initialize block size
@@ -120,14 +123,26 @@ int main(){
     wc_AesSetIV(&dec, iv); // Set IV
     wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
         
-    uart_write_str(UART0, "Key set:\n");
+    uart_write_str(UART0, "Key set: ");
+
+    
 
     uint8_t plaintext[8192]; // Define plaintext
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
-    uart_write_str(UART0, "Data decrypted:\n");
-    for (int i = 0; i < size; i++){uart_write_hex(UART0, plaintext[i]);} // Write plaintext
 
-    uart_write_str(UART0, "Plaintext written:\n");
+    uart_write_hex(UART0, plaintext);
+
+    
+    if(plaintext == data){
+        uart_write_str(UART0, "\nData decrypted:\n");
+    }
+    else{
+        uart_write_str(UART0, "\nError!");
+    }
+    
+    for (int i = 0; i < size; i++){uart_write(UART0, plaintext[i]);} // Print plaintext
+
+   // uart_write_str(UART0, "Plaintext written:\n");
 
     //uart_write_str(UART0, "Decrypted:\n");
     //uart_write_hex(UART0, plaintext);
