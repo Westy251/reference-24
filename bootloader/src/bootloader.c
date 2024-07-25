@@ -87,8 +87,8 @@ int main(){
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
 
-    uint8_t iv[] = {0x61, 0x72, 0x74, 0x68, 0x75, 0x72, 0x72, 0x6F, 0x62, 0x69, 0x6E, 0x73, 0x6F, 0x6E, 0x69, 0x76};
-
+    //uint8_t iv[] = {0x61, 0x72, 0x74, 0x68, 0x75, 0x72, 0x72, 0x6F, 0x62, 0x69, 0x6E, 0x73, 0x6F, 0x6E, 0x69, 0x76};
+    uint8_t iv[16] = "arthurrobinsoniv";
     //debug
     uart_write_str(UART0, "\none");
 
@@ -97,12 +97,12 @@ int main(){
     //debug
     uart_write_str(UART0, "\ntwo");
 
-    uint8_t size = 64;
+    uint8_t size = sizeof(ciphertext);
 
     //debug
     uart_write_str(UART0, "\nthree");
    
-    memset(ciphertext, 0, size); // Initialize block size
+    //memset(ciphertext, 0, size); // Initialize block size
 
     //debug
     uart_write_str(UART0, "\nfour");
