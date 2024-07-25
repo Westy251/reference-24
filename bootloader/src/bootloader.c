@@ -92,12 +92,12 @@ int main(){
     //debug
     uart_write_str(UART0, "\none");
 
-    uint8_t ciphertext[16] = "K1mXU4LM4wrIOlIa7/YGGuVCebmB7Z7awvsLJkkI2c0=";
+    uint8_t ciphertext[16] = "2B59975382CCE30AC83A521AEFF6061AE54279B981ED9EDAC2FB0B264908D9CD";
 
     //debug
     uart_write_str(UART0, "\ntwo");
 
-    uint8_t size = 44;
+    uint8_t size = 64;
 
     //debug
     uart_write_str(UART0, "\nthree");
