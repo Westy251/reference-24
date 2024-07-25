@@ -76,23 +76,52 @@ void debug_delay_led() {
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0x0);
 }
 
+#define KEY "arthurrobinsoniv"
+
 int main(){
+
+    initialize_uarts(UART0);
+
+    uart_write_str(UART0, "WHat's up Fortnite Players!!!!");
 
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
 
-    #define KEY "arthurrobinsoniv"
-
     uint8_t iv[16] = "arthurrobinsoniv";
+
+    //debug
+    uart_write_str(UART0, "\none");
+
     uint8_t ciphertext[16] = "K1mXU4LM4wrIOlIa7/YGGuVCebmB7Z7awvsLJkkI2c0=";
-    uint8_t size = strlen("K1mXU4LM4wrIOlIa7/YGGuVCebmB7Z7awvsLJkkI2c0=");
+
+    //debug
+    uart_write_str(UART0, "\ntwo");
+
+    uint8_t size = 44;
+
+    //debug
+    uart_write_str(UART0, "\nthree");
    
     memset(ciphertext, 0, size); // Initialize block size
+
+    //debug
+    uart_write_str(UART0, "\nfour");
+
     wc_AesSetIV(&dec, iv); // Set IV
+
+    //debug
+    uart_write_str(UART0, "\nfive");
+
     wc_AesSetKey(&dec, KEY, size, iv, AES_DECRYPTION); //Set KEY
+
+    //debug
+    uart_write_str(UART0, "\nsix");
 
     uint8_t plaintext[size]; // Define plaintext
     wc_AesCbcDecrypt(&dec, plaintext, ciphertext, size); // Decrypt
+
+    //debug
+    uart_write_str(UART0, "\nseven");
     
     for (int i = 0; i < size; i++){uart_write(UART0, plaintext[i]);} // Print plaintext
 
