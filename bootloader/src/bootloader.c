@@ -82,23 +82,7 @@ int main(){
 
     Aes dec; // Decrypt of Aes *aes
     Aes enc; // Encrypt of Aes *aes
-
-    //debug code
-
-    uart_write_str(UART0, "Fortnite Farts");
-
-    uint8_t test_iv[16] = "arthurrobinsoniv";
-    uint8_t test_ciphertext[16] = "arthurrobinsoniv";
-    uint8_t test_size = strlen("arthurrobinsoniv");
-
-    //
-
-    uart_write_hex(UART0, test_iv);
-    uart_write_hex(UART0, test_size);
-    uart_write_hex(UART0, test_ciphertext);
-
-    //#include “../key_is_here.h” // The KEY is defined in there
-
+    
     #define KEY "keykeykeykeykey"
 
     uint8_t iv[16]; // Define IV
