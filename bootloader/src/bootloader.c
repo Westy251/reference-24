@@ -82,24 +82,29 @@ int main(){
     uart_write_str(UART0, "Welcome to Roblox Institute of Technology!!! \n");
 
     // Imported variables
-    RsaKey priv; //works
-    RsaKey pub; //works
-    WC_RNG rng; //works
+    RsaKey priv;
+    RsaKey pub;
+    
+    // Note, the wolfssl original RsaKey rng is not recommended
+    #define rng "rng"
 
     // Definitions
-    long e = 65537; //works
-    byte n[] = {0xff, 0xff, 0xff};
-    byte msg[] = {0xff, 0xff, 0xff, 0xff, 0xff};
-    byte cipher[256];
+    int ret;
+    byte e[] = {0xff, 0xff, 0xff}; // Initialize with received e component of the public key
+    byte n[] = {0xff, 0xff, 0xff}; // Initialize with received n component of the public key
+    byte plaintext[] = {0xff, 0xff, 0xff, 0xff, 0xff}; 
+    byte ciphertext[256];
 
-    wc_InitRsaKey(&pub, NULL); //works
+    wc_InitRsaKey(&pub, NULL);
 
-   // wc_InitRng(&rng); //problematic
-   // wc_MakeRSAKey(&priv, 2048, e, &rng); //problematic
+    wc_InitRng(&rng);
+    wc_MakeRSAKey(&priv, 2048, e, &rng);
 
-    wc_RsaPublicKeyDecodeRaw(n, sizeof(n), e, sizeof(e), &pub); //works
+    wc_RsaPublicKeyDecodeRaw(n, sizeof(n), e, sizeof(e), &pub);
 
-    wc_RsaPublicEncrypt(msg, sizeof(msg), cipher, sizeof(cipher), &pub, &rng);
+    wc_RsaPublicEncrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub, &rng);
+
+    wc_RsaPrivateDecrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub);
 
     uart_write_str(UART0, "RSA\n");
 
