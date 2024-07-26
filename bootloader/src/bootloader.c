@@ -102,7 +102,7 @@ int main(){
 
     wc_RsaPublicKeyDecodeRaw(n, sizeof(n), e, sizeof(e), &pub);
 
-    wc_RsaPublicEncrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub, &KEY);
+    wc_RsaPublicEncrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub, KEY);
 
     wc_RsaPrivateDecrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub);
 

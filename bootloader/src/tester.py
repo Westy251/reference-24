@@ -30,3 +30,5 @@ with open("key.h", 'w') as f:
     f.write("#endif // KEY_H\n")
 
     #Thanks max
+
+    #convert to der
