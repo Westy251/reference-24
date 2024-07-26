@@ -86,7 +86,7 @@ int main(){
     RsaKey pub;
     
     // Note, the wolfssl original RsaKey rng is not recommended
-    #define rng "rng"
+    #include "key.h"
 
     // Definitions
     int ret;
@@ -97,22 +97,18 @@ int main(){
 
     wc_InitRsaKey(&pub, NULL);
 
-    wc_InitRng(&rng);
-    wc_MakeRSAKey(&priv, 2048, e, &rng);
+    //wc_InitRng(KEY);
+    wc_MakeRSAKey(&priv, 2048, e, KEY);
 
     wc_RsaPublicKeyDecodeRaw(n, sizeof(n), e, sizeof(e), &pub);
 
-    wc_RsaPublicEncrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub, &rng);
+    wc_RsaPublicEncrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub, &KEY);
 
     wc_RsaPrivateDecrypt(plaintext, sizeof(plaintext), ciphertext, sizeof(ciphertext), &pub);
 
     uart_write_str(UART0, "RSA\n");
 
 }
-/*hi*/
-/*hi*/
-/*hi*/
-
 /*
 int main(void) {
 
