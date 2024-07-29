@@ -10,7 +10,7 @@ ser = serial.Serial("/dev/ttyACM0", 115200)
 
 mykey = RSA.generate(2048)
 
-wkey = mykey.export_key(passphrase="Skibidi")
+wkey = mykey.export_key(format='DER')
 
 
 e_bytes = mykey.e.to_bytes((mykey.e.bit_length() + 7) // 8, 'little')
@@ -52,10 +52,10 @@ signature_converted += "}"
 
 print(signature_converted)
 
-'''with open("key.pem", "wb") as brugh:
+with open("key.pem", "wb") as brugh:
     brugh.write(wkey)
 
-def strip_pem_headers(key):
+'''def strip_pem_headers(key):
     # Remove the PEM headers and newlines
     key = key.decode('utf-8')
     key = re.sub(r"-----BEGIN .*?-----", "", key)
@@ -69,13 +69,13 @@ n = pack(mykey.n, word_size=len(mykey.n)
 
 
 
-print(n)
+print(n)'''
 
 with open("key.h", 'w') as f:
     f.write("#ifndef DEFINE_KEY\n")
-    f.write(f'static const char KEY[] = "{wkey}";\n')
+    f.write(f'static const char KEY[] = {{{"".join([f"{hex(b)}," for b in wkey])}}};\n')
     f.write("#endif // KEY_H\n")
 
     #Thanks max
 
-    #convert to der'''
+    #convert to der
