@@ -22,7 +22,7 @@
 #include "wolfssl/wolfcrypt/settings.h"
 #include "wolfssl/wolfcrypt/aes.h"
 #include "wolfssl/wolfcrypt/sha.h"
-#include "wolfssl/wolfcrypt/rsa.h"
+#include "wolfssl/wolfcrypt/rsa.h" //Check user settings
 
 // Forward Declarations
 void load_firmware(void);
