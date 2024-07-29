@@ -40,7 +40,17 @@ message = b'Reina and Charlie are the best TAs!'
 h = SHA256.new(message)
 signature = pkcs1_15.new(mykey).sign(h)
 
-print(signature)
+signature_converted = "{"
+
+for i in signature:
+    signature_converted += hex(i)
+    signature_converted += ", "
+
+signature_converted = signature_converted[0:len(signature_converted) - 2]
+
+signature_converted += "}"
+
+print(signature_converted)
 
 '''with open("key.pem", "wb") as brugh:
     brugh.write(wkey)

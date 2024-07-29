@@ -145,7 +145,7 @@ extern "C" {
     #endif
 
     /* RSA Public only */
-    #if 1
+    #if 0
         #define WOLFSSL_RSA_VERIFY_ONLY
         #define WOLFSSL_RSA_VERIFY_INLINE
         #define WOLFSSL_RSA_PUBLIC_ONLY
