@@ -1,6 +1,8 @@
 from Crypto.PublicKey import RSA
+from Crypto.Hash import *
 from pwn import *
 import serial
+from Crypto.Signature import pkcs1_15
 import re
 import math
 
@@ -34,7 +36,11 @@ print("e-value: " + e_converted)
 print("")
 print("n-value: " + n_converted)
 
-#print(wkey)
+message = b'Reina and Charlie are the best TAs!'
+h = SHA256.new(message)
+signature = pkcs1_15.new(mykey).sign(h)
+
+print(signature)
 
 '''with open("key.pem", "wb") as brugh:
     brugh.write(wkey)
