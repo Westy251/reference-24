@@ -205,22 +205,63 @@ void load_firmware(void) {
 
 int frame_decrypt(uint8_t *array, int expected_type){
 
+    // Aes definitions
     Aes dec;
     Aes enc;
 
-    byte IV[16] = 'arthurrobinsoniv';
-    byte ciphertext[256];
-    byte plaintext[256];
-    byte authTag[8];
-    byte authIn[] = "authvector" ; 
+    // Variables
+    byte IV[16];
+    byte ciphertext[1056];
+    byte plaintext[1056];
 
+    int read = 0;
+    int32_t data = 0;
+
+    byte authTag[8];
+    byte authIn[] = "authvector" ; //make it randomly gnerated later
+
+    unsigned char gen_hash[32];
+
+    // Zero out the generated hash array
+    for (int i = 0; i < 32; i++){ gen_hash[i] = 0; }
+
+    // Read and check TYPE
+    if (uart_read(UART0, BLOCKING, &read) != (int) expected_type){ return 1;}
+
+    // Read data and hash
+    for (int i = 0; i < 1056; i++){ 
+        data = uart_read(UART0, BLOCKING, &read); 
+        ciphertext[i] = data;
+    }
+    // Read IV
+    for (int i = 0; i < 16; i++){
+        data = uart_read(UART0, BLOCKING, &read);
+        IV[i] = data;
+    }
+
+    //temp key make it randomly gnerated later
+    #define KEY "abcdefgabbbabbaab"
+
+    // Unencrypt with GCM
     wc_AesInit(&dec, NULL, INVALID_DEVID);
     wc_AesSetIV(&dec, IV);
-
     wc_AesGcmSetKey(&dec, KEY, sizeof(KEY));
     wc_AesGcmDecrypt(&dec, ciphertext, plaintext, IV, sizeof(IV), authTag, sizeof(authTag), authIn, sizeof(authIn));
 
-    return 0;
+    // Generate hash
+    uint8_t size = sizeof(data);
+    byte data[size];
+    memcpy(data, array, size);
+    wc_Sha256Hash(data, size, gen_hash);
+
+    // Compare hash
+    for (int i = 0; i < 32; i ++){
+        if (gen_hash[i] != ciphertext[1024 + i]){
+            return 1;
+        }
+    }
+
+    return 0; //change to error
     
 }
 
