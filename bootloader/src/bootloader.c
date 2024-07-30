@@ -31,6 +31,7 @@
 void load_firmware(void);
 void boot_firmware(void);
 void uart_write_hex_bytes(uint8_t, uint8_t *, uint32_t);
+int frame_decrypt(uint8_t *array, int expected_type); // Frame decrypt from brugh
 
 // Firmware Constants
 #define METADATA_BASE 0xFC00 // base address of version and firmware size in Flash
@@ -202,7 +203,7 @@ void load_firmware(void) {
     } // while(1)
 }
 
-firmware_decrypt(){
+int frame_decrypt(uint8_t *array, int expected_type){
 
     Aes dec;
     Aes enc;
@@ -210,8 +211,8 @@ firmware_decrypt(){
     byte IV[16] = 'arthurrobinsoniv';
     byte ciphertext[256];
     byte plaintext[256];
-    byte authTag[AUTH_TAG_LENGTH];
-    byte authIn[] = //authvector ; 
+    byte authTag[8];
+    byte authIn[] = "authvector" ; 
 
     wc_AesInit(&dec, NULL, INVALID_DEVID);
     wc_AesSetIV(&dec, IV);
@@ -219,7 +220,8 @@ firmware_decrypt(){
     wc_AesGcmSetKey(&dec, KEY, sizeof(KEY));
     wc_AesGcmDecrypt(&dec, ciphertext, plaintext, IV, sizeof(IV), authTag, sizeof(authTag), authIn, sizeof(authIn));
 
-
+    return 0;
+    
 }
 
 /*
