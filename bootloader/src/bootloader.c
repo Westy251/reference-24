@@ -24,6 +24,9 @@
 #include "wolfssl/wolfcrypt/sha.h"
 #include "wolfssl/wolfcrypt/rsa.h" //Check user settings
 
+//KEY
+#include <key.h>
+
 // Forward Declarations
 void load_firmware(void);
 void boot_firmware(void);
@@ -197,6 +200,26 @@ void load_firmware(void) {
 
         uart_write(UART0, OK); // Acknowledge the frame.
     } // while(1)
+}
+
+firmware_decrypt(){
+
+    Aes dec;
+    Aes enc;
+
+    byte IV[16] = 'arthurrobinsoniv';
+    byte ciphertext[256];
+    byte plaintext[256];
+    byte authTag[AUTH_TAG_LENGTH];
+    byte authIn[] = //authvector ; 
+
+    wc_AesInit(&dec, NULL, INVALID_DEVID);
+    wc_AesSetIV(&dec, IV);
+
+    wc_AesGcmSetKey(&dec, KEY, sizeof(KEY));
+    wc_AesGcmDecrypt(&dec, ciphertext, plaintext, IV, sizeof(IV), authTag, sizeof(authTag), authIn, sizeof(authIn));
+
+
 }
 
 /*
