@@ -124,16 +124,40 @@ void load_firmware(void) {
     int read = 0;
     uint32_t rcv = 0;
 
+    int error = 0;
+    int error_ctr = 0;
+
     uint32_t data_index = 0;
     uint32_t page_addr = FW_BASE;
     uint32_t version = 0;
     uint32_t size = 0;
 
-    // Get version.
+    // Complete Data Buffer (Firmware Buffer)
+    unsigned char complete_data[1024];
+
+    // Read frame
+    error = frame_decrypt(complete_data, 1);
+
+    // Get version (0x2)
+    version = (uint16_t)complete_data[0];
+    version |= (uint16_t)complete_data[1];
+    uart_write_str(UART0, "Recieved Firmware Version: ");
+    uart_write_hex(UART0, version);
+    nl(UART0);
+
+    // Get Release Message Size (0x2)
+    size = (uint16_t)complete_data[2];
+    size |= (uint16_t)complete_data[3] << 8;
+    uart_write_str(UART0, "Recieved Firmware Size: ");
+    uart_write_hex(UART0, size);
+    nl(UART0);
+
     rcv = uart_read(UART0, BLOCKING, &read);
     version = (uint32_t)rcv;
     rcv = uart_read(UART0, BLOCKING, &read);
     version |= (uint32_t)rcv << 8;
+    
+
 
     // Get size.
     rcv = uart_read(UART0, BLOCKING, &read);
@@ -158,6 +182,7 @@ void load_firmware(void) {
     }
 
     // Write new firmware size and version to Flash
+
     // Create 32 bit word for flash programming, version is at lower address, size is at higher address
     uint32_t metadata = ((size & 0xFFFF) << 16) | (version & 0xFFFF);
     program_flash((uint8_t *) METADATA_BASE, (uint8_t *)(&metadata), 4);
