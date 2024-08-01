@@ -129,57 +129,63 @@ void load_firmware(void) {
 
     uint32_t data_index = 0;
     uint32_t page_addr = FW_BASE;
+
     uint32_t version = 0;
     uint32_t size = 0;
+    uint32_t rSize = 0;
+    uint32_t fSize = 0;
 
     // Complete Data Buffer (Firmware Buffer)
     unsigned char complete_data[1024];
 
-    // Read frame
-    error = frame_decrypt(complete_data, 1);
+    do{
 
-    // Get version (0x2)
-    version = (uint16_t)complete_data[0];
-    version |= (uint16_t)complete_data[1];
-    uart_write_str(UART0, "Recieved Firmware Version: ");
-    uart_write_hex(UART0, version);
-    nl(UART0);
+        // Read frame
+        error = frame_decrypt(complete_data, 1);
 
-    // Get Release Message Size (0x2)
-    size = (uint16_t)complete_data[2];
-    size |= (uint16_t)complete_data[3] << 8;
-    uart_write_str(UART0, "Recieved Firmware Size: ");
-    uart_write_hex(UART0, size);
-    nl(UART0);
+        // Get version (0x2)
+        version = (uint16_t)complete_data[0];
+        version |= (uint16_t)complete_data[1];
+        uart_write_str(UART0, "Recieved Version: ");
+        uart_write_hex(UART0, version);
+        nl(UART0);
 
-    rcv = uart_read(UART0, BLOCKING, &read);
-    version = (uint32_t)rcv;
-    rcv = uart_read(UART0, BLOCKING, &read);
-    version |= (uint32_t)rcv << 8;
-    
+        // Get Firmware Size (0x2)
+        fSize = (uint16_t)complete_data[2];
+        fSize |= (uint16_t)complete_data[3] << 8;
+        uart_write_str(UART0, "Recieved Firmware Size: ");
+        uart_write_hex(UART0, fSize);
+        nl(UART0);
 
+        // Get Release Message Size (0x2)
+        rSize = (uint16_t)complete_data[2];
+        rSize |= (uint16_t)complete_data[3] << 8;
+        uart_write_str(UART0, "Recieved Release Message Size: ");
+        uart_write_hex(UART0, rSize);
+        nl(UART0);
 
-    // Get size.
-    rcv = uart_read(UART0, BLOCKING, &read);
-    size = (uint32_t)rcv;
-    rcv = uart_read(UART0, BLOCKING, &read);
-    size |= (uint32_t)rcv << 8;
+        // Compare to old version and abort if older (note special case for version 0).
+        // If no metadata available (0xFFFF), accept version 1
+        uint16_t old_version = *fw_version_address;
+        if (old_version == 0xFFFF) {
+            old_version = 1;
+        }
 
-    // Compare to old version and abort if older (note special case for version 0).
-    // If no metadata available (0xFFFF), accept version 1
-    uint16_t old_version = *fw_version_address;
-    if (old_version == 0xFFFF) {
-        old_version = 1;
-    }
+        if (version != 0 && version < old_version) {
+            uart_write(UART0, ERROR); // Reject the metadata.
+            SysCtlReset();            // Reset device
+            return;
+        } else if (version == 0) {
+            // If debug firmware, don't change version
+            version = old_version;
+        }
 
-    if (version != 0 && version < old_version) {
-        uart_write(UART0, ERROR); // Reject the metadata.
-        SysCtlReset();            // Reset device
-        return;
-    } else if (version == 0) {
-        // If debug firmware, don't change version
-        version = old_version;
-    }
+        // Reject Metadata if any Error
+        if (error == 1){
+            uart_write(UART0, ERROR);
+        }
+
+    }while (error != 0);
 
     // Write new firmware size and version to Flash
 
