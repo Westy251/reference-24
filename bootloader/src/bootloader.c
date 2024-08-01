@@ -185,6 +185,15 @@ void load_firmware(void) {
             uart_write(UART0, ERROR);
         }
 
+        // Error Timeout
+        // Reset if 10+ errors
+        error_ctr += error;
+        if (error_ctr > 10){
+            uart_write_str(UART0, "Timeout: too many errors!\n");
+            SysCtlReset();
+            return;
+        }
+
     }while (error != 0);
 
     // Write new firmware size and version to Flash
